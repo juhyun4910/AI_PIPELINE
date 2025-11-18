@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { BlockPalette } from "@/components/block-palette"
 import { Canvas } from "@/components/canvas"
 import { PropertyPanel } from "@/components/property-panel"
-import { Save, Play, Share2, Undo2, ArrowLeft, RotateCcw, X } from 'lucide-react'
+import { Save, Play, Share2, ArrowLeft, RotateCcw, X } from 'lucide-react'
 
 export function PipelineBuilder({
   pipeline,
@@ -91,10 +91,6 @@ export function PipelineBuilder({
           <h2 className="text-xl font-semibold">{pipelineName || pipeline.name}</h2>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-            <Undo2 className="w-4 h-4" />
-            되돌리기
-          </Button>
           <Button 
             variant="outline" 
             size="sm" 

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Plus, BookOpen, FileText, Zap, Play, Trash2 } from 'lucide-react'
+import { Plus, BookOpen, FileText, Zap, Play, Trash2, Share2 } from 'lucide-react'
 
 const templates = [
   {
@@ -165,6 +165,31 @@ export function Dashboard({
   onEditPipeline?: (pipe: any) => void
   onDeletePipeline?: (id: string) => void
 }) {
+  const handleSharePipeline = async (pipeline: any) => {
+    const summary = `파이프라인: ${pipeline.name}\n블록 수: ${pipeline.blocks?.length || 0}\n작성자: ${
+      pipeline.author || "알 수 없음"
+    }`
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: pipeline.name,
+          text: summary,
+        })
+        return
+      } catch (error) {
+        console.log("[dashboard] share cancelled", error)
+      }
+    }
+
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      await navigator.clipboard.writeText(JSON.stringify(pipeline, null, 2))
+      alert("파이프라인 정보가 클립보드에 복사되었습니다.")
+      return
+    }
+
+    alert("이 브라우저에서는 공유 기능을 지원하지 않습니다.")
+  }
   const handleTemplateClick = (template: any) => {
     const canvasWidth = 1200
     const canvasHeight = 800
@@ -258,7 +283,15 @@ export function Dashboard({
                   key={pipeline.id}
                   className="group hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 overflow-hidden"
                 >
-                  <div className="p-6 h-full flex flex-col">
+                  <div className="p-6 h-full flex flex-col relative">
+                    <button
+                      type="button"
+                      onClick={() => handleSharePipeline(pipeline)}
+                      className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+                      aria-label="파이프라인 공유"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
                     <h3 className="text-lg font-semibold mb-2 line-clamp-2">{pipeline.name}</h3>
                     <div className="flex-1 mb-4 text-sm text-muted-foreground">
                       <p>블록: {pipeline.blocks?.length || 0}개</p>

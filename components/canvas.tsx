@@ -11,6 +11,7 @@ const blockStyles: Record<string, string> = {
   llm: "from-green-600 to-green-700",
   guardrail: "from-red-600 to-red-700",
 }
+const connectionStyle = "particle"
 
 export function Canvas({
   blocks,
@@ -180,6 +181,15 @@ export function Canvas({
       </svg>
 
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
         {edges.map((edge, idx) => {
           const source = blocks.find((b) => b.id === edge.source)
           const target = blocks.find((b) => b.id === edge.target)
@@ -189,14 +199,54 @@ export function Canvas({
           const y1 = (source.y || 0) + 50
           const x2 = (target.x || 0) + 75
           const y2 = (target.y || 0) + 50
+          const from = { x: x1, y: y1 }
+          const to = { x: x2, y: y2 }
+          const midX = (from.x + to.x) / 2
+          const midY = (from.y + to.y) / 2
+          const leftToRight = from.x <= to.x
+          const startPoint = leftToRight ? from : to
+          const endPoint = leftToRight ? to : from
+          const particleMidX = (startPoint.x + endPoint.x) / 2
+          const particleMidY = (startPoint.y + endPoint.y) / 2 - 50
+          const particlePath = `M ${startPoint.x} ${startPoint.y} Q ${particleMidX} ${particleMidY} ${endPoint.x} ${endPoint.y}`
+          const defaultPath = `M ${from.x} ${from.y} Q ${midX} ${midY - 30} ${to.x} ${to.y}`
 
           return (
             <g key={idx}>
-              <path
-                d={`M ${x1} ${y1} Q ${(x1 + x2) / 2} ${(y1 + y2) / 2 - 30} ${x2} ${y2}`}
-                className="stroke-primary/60 stroke-2 fill-none"
-              />
-              <circle cx={x2} cy={y2} r="5" className="fill-primary/60" />
+              {connectionStyle === "particle" ? (
+                <>
+                  <path
+                    d={particlePath}
+                    stroke="rgba(59, 130, 246, 0.3)"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeDasharray="5 5"
+                  />
+                  <circle r="4" fill="#3b82f6" filter="url(#glow)">
+                    <animateMotion
+                      dur="2s"
+                      repeatCount="indefinite"
+                      path={particlePath}
+                    />
+                  </circle>
+                  <circle r="3" fill="#8b5cf6" filter="url(#glow)">
+                    <animateMotion
+                      dur="2.5s"
+                      repeatCount="indefinite"
+                      begin="0.5s"
+                      path={particlePath}
+                    />
+                  </circle>
+                </>
+              ) : (
+                <>
+                  <path
+                    d={defaultPath}
+                    className="stroke-primary/60 stroke-2 fill-none"
+                  />
+                  <circle cx={x2} cy={y2} r="5" className="fill-primary/60" />
+                </>
+              )}
             </g>
           )
         })}
