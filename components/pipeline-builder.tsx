@@ -5,16 +5,15 @@ import { Button } from "@/components/ui/button"
 import { BlockPalette } from "@/components/block-palette"
 import { Canvas } from "@/components/canvas"
 import { PropertyPanel } from "@/components/property-panel"
+import { TestPanel } from "@/components/test-panel"
 import { Save, Play, Share2, ArrowLeft, RotateCcw, X } from 'lucide-react'
 
 export function PipelineBuilder({
   pipeline,
-  onTest,
   onBack,
   onSave,
 }: {
   pipeline: any
-  onTest: () => void
   onBack: () => void
   onSave: (pipeline: any) => void
 }) {
@@ -27,6 +26,7 @@ export function PipelineBuilder({
   )
   const [edges, setEdges] = useState<any[]>(pipeline.edges || [])
   const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [showTestPanel, setShowTestPanel] = useState(false)
   const [pipelineName, setPipelineName] = useState(pipeline.name || "")
 
   const handleAddBlock = (block: any) => {
@@ -91,9 +91,9 @@ export function PipelineBuilder({
           <h2 className="text-xl font-semibold">{pipelineName || pipeline.name}</h2>
         </div>
         <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             className="gap-2 bg-transparent text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={handleReset}
           >
@@ -106,11 +106,13 @@ export function PipelineBuilder({
           </Button>
           <Button
             size="sm"
-            className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-            onClick={onTest}
+            className={"gap-2 " + (showTestPanel
+              ? "bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700"
+              : "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700")}
+            onClick={() => setShowTestPanel(!showTestPanel)}
           >
             <Play className="w-4 h-4" />
-            테스트 실행
+            {showTestPanel ? "테스트 닫기" : "테스트 실행"}
           </Button>
           <Button variant="outline" size="sm" className="gap-2 bg-transparent">
             <Share2 className="w-4 h-4" />
@@ -140,11 +142,20 @@ export function PipelineBuilder({
 
         {/* 우측 속성 패널 */}
         {selectedBlock && <PropertyPanel block={getSelectedBlockData()} />}
+
+        {/* 테스트 패널 */}
+        {showTestPanel && (
+          <TestPanel
+            pipeline={pipeline}
+            blocks={blocks}
+            edges={edges}
+          />
+        )}
       </div>
 
       {/* 하단 상태바 */}
       <div className="border-t border-border/50 backdrop-blur-sm bg-background/50 px-6 py-3 text-xs text-muted-foreground">
-        파이프라인 준비 완료 • {blocks.length}개 블록 {edges.length > 0 && `• ${edges.length}개 연결됨`}
+        파이프라인 준비 완료 • {blocks.length}개 블록 {edges.length > 0 && "• " + edges.length + "개 연결됨"}
       </div>
 
       {showSaveDialog && (

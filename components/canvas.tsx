@@ -100,9 +100,13 @@ export function Canvas({
           name: blockData.name,
           description: blockData.description,
           icon: blockData.icon,
-          blockType: blockData.blockType,
-          modelName: blockData.modelName,
+          type: blockData.type, // LLM, embedding 등 블록 타입
+          blockType: blockData.type, // 스타일링용 (이전 호환성)
+          modelId: blockData.modelId, // 모델 ID (gemma2-9b-it 등)
+          provider: blockData.provider, // 프로바이더 (groq, huggingface 등)
+          modelName: blockData.modelId ? `${blockData.provider}/${blockData.modelId}` : null,
           settings: blockData.settings,
+          config: blockData.config || {},
           x: Math.max(0, x - 75),
           y: Math.max(0, y - 50),
         }

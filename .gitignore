@@ -1,7 +1,43 @@
+# Node.js
 .next
 node_modules
 .pnpm-store
-.DS_Store
 dist
 build
 coverage
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+.eggs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# Claude Code
+.claude/

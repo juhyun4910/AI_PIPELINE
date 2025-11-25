@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Dashboard } from "@/components/dashboard"
 import { PipelineBuilder } from "@/components/pipeline-builder"
-import { TestPanel } from "@/components/test-panel"
 import { PipelineLibrary } from "@/components/pipeline-library"
 import { PipelineRunner } from "@/components/pipeline-runner"
 import { PipelineDeployer } from "@/components/pipeline-deployer"
@@ -13,7 +12,6 @@ import { LogOut } from "lucide-react"
 export default function Home() {
   const [view, setView] = useState<"dashboard" | "builder" | "library" | "runner" | "deployer">("dashboard")
   const [pipeline, setPipeline] = useState<any>(null)
-  const [showTestPanel, setShowTestPanel] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState("")
   const [savedPipelines, setSavedPipelines] = useState<any[]>([])
@@ -119,14 +117,12 @@ export default function Home() {
           onDeletePipeline={handleDeletePipeline}
         />
       ) : view === "builder" ? (
-        <div className="flex h-[calc(100vh-57px)]">
+        <div className="h-[calc(100vh-57px)]">
           <PipelineBuilder
             pipeline={pipeline}
-            onTest={() => setShowTestPanel(!showTestPanel)}
             onBack={() => setView("dashboard")}
             onSave={handleSavePipeline}
           />
-          {showTestPanel && <TestPanel pipeline={pipeline} />}
         </div>
       ) : view === "library" ? (
         <PipelineLibrary
